@@ -123,5 +123,68 @@ const manager = aPerson.manager;
 
 
 ### 7.8 Remove Middle Man
+> 단순히 전달만 하는 위임 메서드들이 많아지면, 차라리 직접 클라이언트가 위임 객체를 호출하는 편이 더 낫다.
 > 
 c.f. 중개자 제거하기
+
+```javascript
+// before
+const manager = aPerson.manager;
+
+class Person {
+  // ...
+  get manager() {
+    return this._department.manager;
+  }
+}
+
+class Department {
+  // ...
+  get manager() {
+    return this._manager;
+  }
+}
+```
+1. 위임 객체를 얻는 gatter 생성
+2. 클라이언트가 부서 객체 직접 사용하도록 수정
+
+```javascript
+// after
+class Person {
+  // ...
+  get department() {
+    return this._department;
+  }
+  // 삭제
+  // get manager() { return this._department.manager; }
+}
+
+// 클라이언트
+const manager = aPerson.department.manager;
+```
+
+### 7.9 Substitute Algorithm
+
+> 메서드를 잘게 나누어 알고리즘을 간소화하자.
+> 
+
+```javascript
+// before
+function foundPerson(people) {
+  for(let i = 0; i < people.length; i++) {
+    if (people[i] == "Don") {
+      return "Don";
+    }
+    if (people[i] == "John") {
+      return "John";
+    }
+    if (people[i] == "Kay") {
+      return "Kay";
+    }
+    return "";
+    
+// after
+function foundPerson(people) {
+  const candidates = ["Don", "John", "Kay"]
+  return people.find(p => candidates.includes(p)) || '' ;
+```
